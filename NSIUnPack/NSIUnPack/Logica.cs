@@ -15,6 +15,14 @@ namespace NSIUnPack
         public Logica()
         { }
 
+        //unzip test
+        public void UnZip()
+        {
+            archNSI nsi1 = new archNSI(@"c:\temp\unp\in\1.zip");
+            bool isSuccess = nsi1.UnZipNSI(@"c:\temp\unp\out\
+");
+        }
+
         //for tests
         public void PrintFiles()
         {

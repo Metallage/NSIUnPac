@@ -10,7 +10,8 @@ namespace NSIUnPack
         static void Main(string[] args)
         {
             Logica nsiLogic = new Logica();
-            nsiLogic.PrintFiles();
+            //nsiLogic.PrintFiles();
+            nsiLogic.UnZip();
             Console.Read();
 
         }

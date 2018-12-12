@@ -5,21 +5,41 @@ using System.Text;
 using System.Diagnostics;
 using System.Threading;
 using System.IO;
+using System.Text.RegularExpressions;
 
 namespace NSIUnPack
 {
     class archNSI
     {
+        //Путь к файлу
         private string filePath;
-
+        // Имя файла, выцепляется регулярными выражениями
+        private string fileName;
+        //Расширение файла, выцепляется регулярными выражениями
+        private string fileExtension; 
+        //Регулярное выражение, для выдирания имени и расширения файла в случае расположения на локальном диске
+        private string localRegexp = @"[a-zA-Z]:[a-zA-Z0-9\\]*\\(?<file>[\w]+).(?<extention>zip|rar|lzh|7z)"; 
+        
+        /// <summary>
+        /// Логический объект типа файл архива (конструктор)
+        /// </summary>
+        /// <param name="filePath">Путь к файлу</param>
         public archNSI(string filePath)
         {
             this.filePath = filePath;
+            Regex fileReg = new Regex(localRegexp);
+            if (fileReg.Matches(filePath).Count == 1)
+            {
+                Match fileMatch = fileReg.Match(filePath);
+                this.fileName = fileMatch.Groups["file"].Value.ToString();
+                this.fileExtension = fileMatch.Groups["extention"].Value.ToString();
+            }
+            
         }
 
         public bool UnZipNSI(string outputPath)
         {
-            bool isSuccess = false;
+            bool isSuccess = ExtractME(@"c:\temp\unp\7z\7z.exe", filePath, outputPath+@"\"+this.fileName+@"\");
 
 
             return isSuccess;
@@ -32,13 +52,14 @@ namespace NSIUnPack
 
             return exterminated;
         }
+       
         /// <summary>
         /// Нашел эту функцию в гугле, нужна для извлечения файлов с помощью 7zip
         /// </summary>
         /// <param name="archiverEXE">полный путь к 7zip.exe</param>
         /// <param name="archiveFile">Файл архива</param>
         /// <param name="outputFolder">Дирректория назначения распаковки</param>
-        /// <returns></returns>
+        /// <returns>Успешно ли распаковалось</returns>
         private bool ExtractME(string archiverEXE, string archiveFile, string outputFolder) 
         {
             bool isSucsess = false;
