@@ -13,14 +13,19 @@ namespace NSIUnPack
         private string outPath = @"c:\Temp\outNSI";
 
         public Logica()
-        { }
+        {
+            if(!Directory.Exists(tempPath))
+            {
+                Directory.CreateDirectory(tempPath);
+
+            }
+        }
 
         //unzip test
         public void UnZip()
         {
             archNSI nsi1 = new archNSI(@"c:\temp\unp\in\1.zip");
-            bool isSuccess = nsi1.UnZipNSI(@"c:\temp\unp\out\
-");
+            bool isSuccess = nsi1.UnZipNSI(tempPath ,@"c:\temp\unp\out\");
         }
 
         //for tests

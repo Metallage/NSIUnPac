@@ -37,13 +37,23 @@ namespace NSIUnPack
             
         }
 
-        public bool UnZipNSI(string outputPath)
+        public bool UnZipNSI(string tempPath, string outputPath)
         {
-            bool isSuccess = ExtractME(@"c:\temp\unp\7z\7z.exe", filePath, outputPath+@"\"+this.fileName+@"\");
+            if(!Directory.Exists(tempPath + @"\" + this.fileName + @"\"))
+            {
+                Directory.CreateDirectory(tempPath + @"\" + this.fileName + @"\");
+            }
+            bool isSuccess = ExtractME(@"c:\temp\unp\7z\7z.exe", filePath, tempPath+@"\"+this.fileName+@"\");
 
+            if(isSuccess)
+            {
+                finalCopy(tempPath + @"\" + this.fileName + @"\", outputPath);
+            }
 
             return isSuccess;
         }
+
+
 
         public bool ExterminateMe()
         {
@@ -132,5 +142,14 @@ namespace NSIUnPack
             return isSucsess;
         }
 
+        private void finalCopy(string fromPath, string toPath)
+        {
+            DirectoryInfo fromDir = new DirectoryInfo(fromPath);
+            FileInfo[] fromFiles = fromDir.GetFiles();
+            foreach(FileInfo fi1 in fromFiles)
+            {
+                File.Copy(fi1.FullName,toPath+@"\"+fi1.Name+"."+fi1.Extension);
+            }
+        }
     }
 }
