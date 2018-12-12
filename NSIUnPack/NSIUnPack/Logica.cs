@@ -16,7 +16,16 @@ namespace NSIUnPack
         {
             if(!Directory.Exists(tempPath))
             {
-                Directory.CreateDirectory(tempPath);
+                //Создаём временную директорию, если её нет
+                if (!Directory.Exists(tempPath))
+                {
+                    Directory.CreateDirectory(tempPath);
+                }
+                //Создаём дирректорию вывода, если её нет
+                if (!Directory.Exists(outPath))
+                {
+                    Directory.CreateDirectory(outPath);
+                }
 
             }
         }
@@ -48,6 +57,16 @@ namespace NSIUnPack
 
         }
 
+        private void OperateNSI()
+        {
+            DirectoryInfo sourceDir = new DirectoryInfo(inPath);
+
+            //Проверяем директорию с архивами
+            if(sourceDir.Exists)
+            {
+
+            }
+        }
 
     }
 }

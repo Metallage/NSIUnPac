@@ -27,8 +27,10 @@ namespace NSIUnPack
         public archNSI(string filePath)
         {
             this.filePath = filePath;
+            //пробуем проверить путь 
             Regex fileReg = new Regex(localRegexp);
-            if (fileReg.Matches(filePath).Count == 1)
+            //Если парсится один файл то всё хорошо
+            if (fileReg.Matches(filePath).Count == 1) 
             {
                 Match fileMatch = fileReg.Match(filePath);
                 this.fileName = fileMatch.Groups["file"].Value.ToString();
@@ -37,14 +39,23 @@ namespace NSIUnPack
             
         }
 
+        /// <summary>
+        /// Распаковать файл
+        /// </summary>
+        /// <param name="tempPath">Временная директория</param>
+        /// <param name="outputPath">Конечная дирректория</param>
+        /// <returns>Получилось ли распаковать</returns>
         public bool UnZipNSI(string tempPath, string outputPath)
         {
-            if(!Directory.Exists(tempPath + @"\" + this.fileName + @"\"))
+            //Проверяем наличие временной директории, если нет то создаём
+            if (!Directory.Exists(tempPath + @"\" + this.fileName + @"\"))
             {
                 Directory.CreateDirectory(tempPath + @"\" + this.fileName + @"\");
             }
+            //Распаковываем во временную директорию
             bool isSuccess = ExtractME(@"c:\temp\unp\7z\7z.exe", filePath, tempPath+@"\"+this.fileName+@"\");
 
+            //Если получилось из временной в финальную копируем
             if(isSuccess)
             {
                 finalCopy(tempPath + @"\" + this.fileName + @"\", outputPath);
