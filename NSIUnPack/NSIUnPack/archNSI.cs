@@ -19,7 +19,7 @@ namespace NSIUnPack
         private string fileExtension;
         private string directoryPath;
         //Регулярное выражение, для выдирания имени и расширения файла в случае расположения на локальном диске
-        private string localRegexp = @"(?<directory>[a-zA-Z]:[a-zA-Z0-9\\]*\\)(?<file>[\w]+).(?<extention>zip|rar|lzh|7z)"; 
+        private string localRegexp = @"(?<directory>[a-zA-Z]:[a-zA-Z0-9\\]*\\)(?<file>[\w\.]+).(?<extention>zip|rar|lzh|7z)"; 
         
         /// <summary>
         /// Логический объект типа файл архива (конструктор)
@@ -60,7 +60,7 @@ namespace NSIUnPack
             //Если получилось из временной в финальную копируем
             if(isSuccess)
             {
-                finalCopy(tempPath + @"\" + this.fileName + @"\", outputPath, @"c:\temp\unp\pech");
+                finalCopy(tempPath + @"\" + this.fileName + @"\", outputPath, @"c:\temp\unp\pech\");
             }
 
             return isSuccess;
@@ -176,43 +176,46 @@ namespace NSIUnPack
                 //если это архив (FST_ZAKL.RAR), то возвращаем его к архивам
                 if (fi1.Extension.ToLower() == ".rar")
                 {
-                    File.Copy(fi1.FullName, this.directoryPath  + fi1.Name + fi1.Extension, true);
+                    File.Copy(fi1.FullName, this.directoryPath  + fi1.Name, true);
                 }
                 //если это печати, то копируем к печатям TODO проверить на печь
-                else if (fi1.Name == "PECH")
+                else if (fi1.Name == "PECH.DBF")
                 {
-                    string outputPech = pechPath + DateTime.Now.ToShortDateString();
+                    string outputPech = pechPath + DateTime.Now.ToShortDateString()+@"\";
                     if (!Directory.Exists(outputPech))
                     {
                         Directory.CreateDirectory(outputPech);
-                        File.Copy(fi1.FullName, outputPech + fi1.Name+fi1.Extension);
+                        File.Copy(fi1.FullName, outputPech + fi1.Name);
 
                     }
 
                 }
                 //Если V2 то удаляем
-                else if (fi1.Name == "V2")
+                else if (fi1.Name == "V2.DBF")
                 {
 
                 }
-                else
+                else if((fi1.Extension.ToLower() == ".dbf")|(fi1.Extension.ToLower() == ".dbt"))
                 {
                     //Ищем в целевой директории файлы с таким же именем, если они есть то оставляем самые свежие
-                    if (!File.Exists(toPath + fi1.Name  + fi1.Extension))
+                    if (!File.Exists(toPath + fi1.Name))
                     {
-                        File.Copy(fi1.FullName, toPath  + fi1.Name  + fi1.Extension);
+                        File.Copy(fi1.FullName, toPath  + fi1.Name );
 
                     }
                     else
                     {
-                        FileInfo fi2 = new FileInfo(toPath + fi1.Name + fi1.Extension);
+                        FileInfo fi2 = new FileInfo(toPath + fi1.Name);
                         if (fi1.LastWriteTime>fi2.LastWriteTime)
                         {
-                            File.Copy(fi1.FullName, toPath  + fi1.Name  + fi1.Extension, true);
+                            File.Copy(fi1.FullName, toPath  + fi1.Name, true);
                         }
 
                     }
-
+                }
+                else
+                {
+                    File.Copy(fi1.FullName, this.directoryPath + fi1.Name, true);
                 }
 
             }

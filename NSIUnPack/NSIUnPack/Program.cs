@@ -12,7 +12,7 @@ namespace NSIUnPack
             Logica nsiLogic = new Logica();
             //nsiLogic.PrintFiles();
             nsiLogic.ExtractNSI();
-            Console.Read();
+
 
         }
     }
