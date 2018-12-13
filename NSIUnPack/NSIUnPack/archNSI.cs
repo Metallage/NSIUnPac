@@ -178,7 +178,7 @@ namespace NSIUnPack
                 {
                     File.Copy(fi1.FullName, this.directoryPath  + fi1.Name + fi1.Extension, true);
                 }
-                //если это печати, то копируем к печатям
+                //если это печати, то копируем к печатям TODO проверить на печь
                 else if (fi1.Name == "PECH")
                 {
                     string outputPech = pechPath + DateTime.Now.ToShortDateString();
