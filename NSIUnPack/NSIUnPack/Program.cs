@@ -11,7 +11,7 @@ namespace NSIUnPack
         {
             Logica nsiLogic = new Logica();
             //nsiLogic.PrintFiles();
-            nsiLogic.UnZip();
+            nsiLogic.ExtractNSI();
             Console.Read();
 
         }

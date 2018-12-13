@@ -50,12 +50,12 @@ namespace NSIUnPack
         public bool UnZipNSI(string tempPath, string outputPath)
         {
             //Проверяем наличие временной директории, если нет то создаём
-            if (!Directory.Exists(tempPath + @"\" + this.fileName + @"\"))
+            if (!Directory.Exists(tempPath + this.fileName + @"\"))
             {
-                Directory.CreateDirectory(tempPath + @"\" + this.fileName + @"\");
+                Directory.CreateDirectory(tempPath + this.fileName + @"\");
             }
             //Распаковываем во временную директорию
-            bool isSuccess = ExtractME(@"c:\temp\unp\7z\7z.exe", filePath, tempPath+@"\"+this.fileName+@"\");
+            bool isSuccess = ExtractME(@"c:\temp\unp\7z\7z.exe", filePath, tempPath+this.fileName+@"\");
 
             //Если получилось из временной в финальную копируем
             if(isSuccess)
@@ -70,8 +70,16 @@ namespace NSIUnPack
 
         private void ClearTempDir(string tempDir)
         {
-            if(Directory.Exists(tempDir))
-            Directory.Delete(tempDir,true);
+            if (Directory.Exists(tempDir))
+            {
+                Directory.Delete(tempDir, true);
+            }
+
+            if(File.Exists(filePath))
+            {
+                File.Delete(filePath);
+            }
+
         }
        
         /// <summary>
@@ -166,47 +174,50 @@ namespace NSIUnPack
             foreach (FileInfo fi1 in fromFiles)
             {
                 //если это архив (FST_ZAKL.RAR), то возвращаем его к архивам
-                if (fi1.Extension.ToLower() == "rar")
+                if (fi1.Extension.ToLower() == ".rar")
                 {
-                    File.Copy(fi1.FullName, this.directoryPath + @"\" + fi1.Name + "." + fi1.Extension, true);
+                    File.Copy(fi1.FullName, this.directoryPath  + fi1.Name + fi1.Extension, true);
                 }
                 //если это печати, то копируем к печатям
                 else if (fi1.Name == "PECH")
                 {
-                    string outputPech = pechPath + @"\" + DateTime.Now.ToShortDateString();
+                    string outputPech = pechPath + DateTime.Now.ToShortDateString();
                     if (!Directory.Exists(outputPech))
                     {
                         Directory.CreateDirectory(outputPech);
-                        File.Copy(fi1.FullName, outputPech+@"\"+fi1.Name+"."+fi1.Extension);
-                        ClearTempDir(fromPath);
+                        File.Copy(fi1.FullName, outputPech + fi1.Name+fi1.Extension);
+
                     }
 
                 }
                 //Если V2 то удаляем
                 else if (fi1.Name == "V2")
                 {
-                    ClearTempDir(fromPath);
+
                 }
                 else
                 {
                     //Ищем в целевой директории файлы с таким же именем, если они есть то оставляем самые свежие
-                    if (!File.Exists(toPath + @"\" + fi1.Name + "." + fi1.Extension))
+                    if (!File.Exists(toPath + fi1.Name  + fi1.Extension))
                     {
-                        File.Copy(fi1.FullName, toPath + @"\" + fi1.Name + "." + fi1.Extension);
-                        ClearTempDir(fromPath);
+                        File.Copy(fi1.FullName, toPath  + fi1.Name  + fi1.Extension);
+
                     }
                     else
                     {
-                        FileInfo fi2 = new FileInfo(toPath + @"\" + fi1.Name + "." + fi1.Extension);
-                        if (fi1.CreationTime>fi2.CreationTime)
+                        FileInfo fi2 = new FileInfo(toPath + fi1.Name + fi1.Extension);
+                        if (fi1.LastWriteTime>fi2.LastWriteTime)
                         {
-                            File.Copy(fi1.FullName, toPath + @"\" + fi1.Name + "." + fi1.Extension, true);
+                            File.Copy(fi1.FullName, toPath  + fi1.Name  + fi1.Extension, true);
                         }
-                        ClearTempDir(fromPath);
+
                     }
 
                 }
+
             }
+            ClearTempDir(fromPath);
         }
     }
 }
+
