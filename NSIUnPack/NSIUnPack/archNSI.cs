@@ -16,9 +16,10 @@ namespace NSIUnPack
         // Имя файла, выцепляется регулярными выражениями
         private string fileName;
         //Расширение файла, выцепляется регулярными выражениями
-        private string fileExtension; 
+        private string fileExtension;
+        private string directoryPath;
         //Регулярное выражение, для выдирания имени и расширения файла в случае расположения на локальном диске
-        private string localRegexp = @"[a-zA-Z]:[a-zA-Z0-9\\]*\\(?<file>[\w]+).(?<extention>zip|rar|lzh|7z)"; 
+        private string localRegexp = @"(?<directory>[a-zA-Z]:[a-zA-Z0-9\\]*\\)(?<file>[\w]+).(?<extention>zip|rar|lzh|7z)"; 
         
         /// <summary>
         /// Логический объект типа файл архива (конструктор)
@@ -35,6 +36,7 @@ namespace NSIUnPack
                 Match fileMatch = fileReg.Match(filePath);
                 this.fileName = fileMatch.Groups["file"].Value.ToString();
                 this.fileExtension = fileMatch.Groups["extention"].Value.ToString();
+                this.directoryPath = fileMatch.Groups["directory"].Value.ToString();
             }
             
         }
@@ -58,7 +60,7 @@ namespace NSIUnPack
             //Если получилось из временной в финальную копируем
             if(isSuccess)
             {
-                finalCopy(tempPath + @"\" + this.fileName + @"\", outputPath);
+                finalCopy(tempPath + @"\" + this.fileName + @"\", outputPath, @"c:\temp\unp\pech");
             }
 
             return isSuccess;
@@ -66,12 +68,10 @@ namespace NSIUnPack
 
 
 
-        public bool ExterminateMe()
+        private void ClearTempDir(string tempDir)
         {
-            bool exterminated = false;
-
-
-            return exterminated;
+            if(Directory.Exists(tempDir))
+            Directory.Delete(tempDir,true);
         }
        
         /// <summary>
@@ -153,13 +153,59 @@ namespace NSIUnPack
             return isSucsess;
         }
 
-        private void finalCopy(string fromPath, string toPath)
+        /// <summary>
+        /// Раскидывает по директориям извлечённые файлы
+        /// </summary>
+        /// <param name="fromPath">где искать файлы</param>
+        /// <param name="toPath">куда копировать</param>
+        /// <param name="pechPath">куда копировать PECH</param>
+        private void finalCopy(string fromPath, string toPath, string pechPath)
         {
             DirectoryInfo fromDir = new DirectoryInfo(fromPath);
             FileInfo[] fromFiles = fromDir.GetFiles();
-            foreach(FileInfo fi1 in fromFiles)
+            foreach (FileInfo fi1 in fromFiles)
             {
-                File.Copy(fi1.FullName,toPath+@"\"+fi1.Name+"."+fi1.Extension);
+                //если это архив (FST_ZAKL.RAR), то возвращаем его к архивам
+                if (fi1.Extension.ToLower() == "rar")
+                {
+                    File.Copy(fi1.FullName, this.directoryPath + @"\" + fi1.Name + "." + fi1.Extension, true);
+                }
+                //если это печати, то копируем к печатям
+                else if (fi1.Name == "PECH")
+                {
+                    string outputPech = pechPath + @"\" + DateTime.Now.ToShortDateString();
+                    if (!Directory.Exists(outputPech))
+                    {
+                        Directory.CreateDirectory(outputPech);
+                        File.Copy(fi1.FullName, outputPech+@"\"+fi1.Name+"."+fi1.Extension);
+                        ClearTempDir(fromPath);
+                    }
+
+                }
+                //Если V2 то удаляем
+                else if (fi1.Name == "V2")
+                {
+                    ClearTempDir(fromPath);
+                }
+                else
+                {
+                    //Ищем в целевой директории файлы с таким же именем, если они есть то оставляем самые свежие
+                    if (!File.Exists(toPath + @"\" + fi1.Name + "." + fi1.Extension))
+                    {
+                        File.Copy(fi1.FullName, toPath + @"\" + fi1.Name + "." + fi1.Extension);
+                        ClearTempDir(fromPath);
+                    }
+                    else
+                    {
+                        FileInfo fi2 = new FileInfo(toPath + @"\" + fi1.Name + "." + fi1.Extension);
+                        if (fi1.CreationTime>fi2.CreationTime)
+                        {
+                            File.Copy(fi1.FullName, toPath + @"\" + fi1.Name + "." + fi1.Extension, true);
+                        }
+                        ClearTempDir(fromPath);
+                    }
+
+                }
             }
         }
     }
