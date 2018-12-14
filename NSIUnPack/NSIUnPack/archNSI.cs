@@ -19,7 +19,7 @@ namespace NSIUnPack
         private string fileExtension;
         private string directoryPath;
         //Регулярное выражение, для выдирания имени и расширения файла в случае расположения на локальном диске
-        private string localRegexp = @"(?<directory>[a-zA-Z]:[a-zA-Z0-9\\]*\\)(?<file>[\w\.]+).(?<extention>zip|rar|lzh|7z)"; 
+        private string localRegexp = @"(?<directory>[a-zA-Z]:[a-zA-Z0-9\\!_]*\\)(?<file>[\w\.]+).(?<extention>zip|rar|lzh|7z)"; 
         
         /// <summary>
         /// Логический объект типа файл архива (конструктор)
@@ -67,7 +67,7 @@ namespace NSIUnPack
         }
 
 
-
+        //Подчищаем временные папки и исходные файлы
         private void ClearTempDir(string tempDir)
         {
             if (Directory.Exists(tempDir))
@@ -178,7 +178,7 @@ namespace NSIUnPack
                 {
                     File.Copy(fi1.FullName, this.directoryPath  + fi1.Name, true);
                 }
-                //если это печати, то копируем к печатям TODO проверить на печь
+                //если это печати, то копируем к печатям 
                 else if (fi1.Name == "PECH.DBF")
                 {
                     string outputPech = pechPath + DateTime.Now.ToShortDateString()+@"\";
