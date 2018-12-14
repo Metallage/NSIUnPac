@@ -47,7 +47,7 @@ namespace NSIUnPack
         /// <param name="tempPath">Временная директория</param>
         /// <param name="outputPath">Конечная дирректория</param>
         /// <returns>Получилось ли распаковать</returns>
-        public bool UnZipNSI(string tempPath, string outputPath)
+        public bool UnZipNSI(string tempPath, string outputPath, string archiver, string pechPath, string unknownPath)
         {
             //Проверяем наличие временной директории, если нет то создаём
             if (!Directory.Exists(tempPath + this.fileName + @"\"))
@@ -55,12 +55,12 @@ namespace NSIUnPack
                 Directory.CreateDirectory(tempPath + this.fileName + @"\");
             }
             //Распаковываем во временную директорию
-            bool isSuccess = ExtractME(@"c:\temp\unp\7z\7z.exe", filePath, tempPath+this.fileName+@"\");
+            bool isSuccess = ExtractME(archiver, filePath, tempPath+this.fileName+@"\");
 
             //Если получилось из временной в финальную копируем
             if(isSuccess)
             {
-                finalCopy(tempPath + @"\" + this.fileName + @"\", outputPath, @"c:\temp\unp\pech\");
+                finalCopy(tempPath + @"\" + this.fileName + @"\", outputPath, pechPath, unknownPath);
             }
 
             return isSuccess;
@@ -167,7 +167,7 @@ namespace NSIUnPack
         /// <param name="fromPath">где искать файлы</param>
         /// <param name="toPath">куда копировать</param>
         /// <param name="pechPath">куда копировать PECH</param>
-        private void finalCopy(string fromPath, string toPath, string pechPath)
+        private void finalCopy(string fromPath, string toPath, string pechPath, string unknownPath)
         {
             DirectoryInfo fromDir = new DirectoryInfo(fromPath);
             FileInfo[] fromFiles = fromDir.GetFiles();
@@ -215,7 +215,11 @@ namespace NSIUnPack
                 }
                 else
                 {
-                    File.Copy(fi1.FullName, this.directoryPath + fi1.Name, true);
+                    if(!Directory.Exists(unknownPath))
+                    {
+                        Directory.CreateDirectory(unknownPath);
+                    }
+                    File.Copy(fi1.FullName, unknownPath + fi1.Name, true);
                 }
 
             }

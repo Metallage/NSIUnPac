@@ -1,0 +1,9 @@
+﻿<?xml version="1.0" encoding="utf-8" ?> 
+<root>
+  <inputPath>c:\temp\unp\in\</inputPath>
+  <tempPath>c:\temp\nsi\</tempPath>
+  <pechPath>c:\temp\unp\pech\</pechPath>
+  <unknownPath>c:\temp\unp\unknown\</unknownPath>
+  <outputPath>c:\temp\unp\out\</outputPath>
+  <archiver>7z\7z.exe</archiver>
+</root>

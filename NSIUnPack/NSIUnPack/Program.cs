@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.IO;
 
 namespace NSIUnPack
 {
@@ -9,9 +10,26 @@ namespace NSIUnPack
     {
         static void Main(string[] args)
         {
-            Logica nsiLogic = new Logica();
-            //nsiLogic.PrintFiles();
-            nsiLogic.ExtractNSI();
+
+            try
+            {
+                if (File.Exists("Path.xml"))
+                {
+                    Logica nsiLogic = new Logica();
+                    nsiLogic.ExtractNSI();
+                }
+                else
+                {
+                    Console.WriteLine("Path.xml не найден");
+                    Console.ReadLine();
+
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+                Console.ReadLine();
+            }
 
 
         }

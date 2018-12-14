@@ -3,19 +3,22 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.IO;
+using System.Xml;
 
 namespace NSIUnPack
 {
     class Logica
     {
-        private string tempPath = @"c:\temp\nsi\";
-        private string inPath = @"c:\temp\unp\in\";
-        private string outPath = @"c:\temp\unp\out\";
+        private string tempPath;
+        private string inPath ;
+        private string pechPath;
+        private string unknownPath;
+        private string outPath ;
+        private string archiver;
 
         public Logica()
         {
-            if (!Directory.Exists(tempPath))
-            {
+            ParseSettings("Path.xml");
                 //Создаём временную директорию, если её нет
                 if (!Directory.Exists(tempPath))
                 {
@@ -27,7 +30,7 @@ namespace NSIUnPack
                     Directory.CreateDirectory(outPath);
                 }
 
-            }
+            
         }
 
 
@@ -53,7 +56,7 @@ namespace NSIUnPack
 
                     foreach(archNSI arN in nsiFiles)
                     {
-                        arN.UnZipNSI(tempPath, outPath);
+                        arN.UnZipNSI(tempPath, outPath, archiver, pechPath, unknownPath);
                     }
 
                 }
@@ -65,11 +68,11 @@ namespace NSIUnPack
 
 
         //unzip test
-        public void UnZip()
-        {
-            archNSI nsi1 = new archNSI(@"c:\temp\unp\in\mdp6406.lzh");
-            bool isSuccess = nsi1.UnZipNSI(tempPath ,@"c:\temp\unp\out\");
-        }
+        //public void UnZip()
+        //{
+        //    archNSI nsi1 = new archNSI(@"c:\temp\unp\in\mdp6406.lzh");
+        //    bool isSuccess = nsi1.UnZipNSI(tempPath ,@"c:\temp\unp\out\");
+        //}
 
         //for tests
         public void PrintFiles()
@@ -89,6 +92,37 @@ namespace NSIUnPack
                 Console.WriteLine("Не найдена дирректория");
             }
 
+        }
+
+        private void ParseSettings(string settingsPath)
+        {
+            XmlDocument mySettings = new XmlDocument();
+            mySettings.Load(settingsPath);
+            XmlNodeList pathSettings = mySettings.DocumentElement.ChildNodes;
+            foreach(XmlNode xmlPath in pathSettings)
+            {
+                switch (xmlPath.LocalName)
+                {
+                    case "inputPath":
+                        inPath = xmlPath.InnerText;
+                        break;
+                    case "tempPath":
+                        tempPath = xmlPath.InnerText;
+                        break;
+                    case "pechPath":
+                        pechPath = xmlPath.InnerText;
+                        break;
+                    case "unknownPath":
+                        unknownPath = xmlPath.InnerText;
+                        break;
+                    case "outputPath":
+                        outPath = xmlPath.InnerText;
+                        break;
+                    case "archiver":
+                        archiver = xmlPath.InnerText;
+                        break;
+                }
+            }
         }
 
         private void OperateNSI()
