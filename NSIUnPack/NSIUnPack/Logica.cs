@@ -15,6 +15,7 @@ namespace NSIUnPack
         private string unknownPath;
         private string outPath ;
         private string archiver;
+        private string regExpString;
 
         public Logica()
         {
@@ -52,10 +53,19 @@ namespace NSIUnPack
                         {
                             nsiFiles.Add(new archNSI(nsiFI.FullName));
                         }
+                        else if(nsiFI.Extension.ToLower() == ".(s)")
+                        {
+                            File.Delete(nsiFI.FullName);
+                        }
                     }
 
                     foreach(archNSI arN in nsiFiles)
                     {
+                        if(regExpString != null)
+                        {
+                            arN.LocalRegExp = regExpString;
+                        }
+
                         arN.UnZipNSI(tempPath, outPath, archiver, pechPath, unknownPath);
                     }
 
@@ -94,6 +104,10 @@ namespace NSIUnPack
 
         }
 
+        /// <summary>
+        /// Парсит настройки из XML
+        /// </summary>
+        /// <param name="settingsPath">путь к xml файлу</param>
         private void ParseSettings(string settingsPath)
         {
             XmlDocument mySettings = new XmlDocument();
@@ -120,6 +134,9 @@ namespace NSIUnPack
                         break;
                     case "archiver":
                         archiver = xmlPath.InnerText;
+                        break;
+                    case "regExp":
+                        regExpString = xmlPath.InnerText;
                         break;
                 }
             }

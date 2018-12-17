@@ -195,7 +195,7 @@ namespace NSIUnPack
                 {
 
                 }
-                else if((fi1.Extension.ToLower() == ".dbf")|(fi1.Extension.ToLower() == ".dbt"))
+                else if((fi1.Extension.ToLower() == ".dbf")|(fi1.Extension.ToLower() == ".dbt") | (fi1.Extension.ToLower() == ".fpt"))
                 {
                     //Ищем в целевой директории файлы с таким же именем, если они есть то оставляем самые свежие
                     if (!File.Exists(toPath + fi1.Name))
@@ -225,6 +225,9 @@ namespace NSIUnPack
             }
             ClearTempDir(fromPath);
         }
+
+        public string LocalRegExp
+        { get; set; }
     }
 }
 
