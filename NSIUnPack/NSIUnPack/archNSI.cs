@@ -11,12 +11,13 @@ namespace NSIUnPack
 {
     class archNSI
     {
-        //Путь к файлу
+        //Полный путь к файлу
         private string filePath;
         // Имя файла, выцепляется регулярными выражениями
         private string fileName;
         //Расширение файла, выцепляется регулярными выражениями
         private string fileExtension;
+        //Дирректория, в которой лежит файл
         private string directoryPath;
         //Регулярное выражение, для выдирания имени и расширения файла в случае расположения на локальном диске
         private string localRegexp = @"(?<directory>[a-zA-Z]:[a-zA-Z0-9\\!_]*\\)(?<file>[\w\.]+).(?<extention>zip|rar|lzh|7z)"; 
@@ -167,6 +168,7 @@ namespace NSIUnPack
         /// <param name="fromPath">где искать файлы</param>
         /// <param name="toPath">куда копировать</param>
         /// <param name="pechPath">куда копировать PECH</param>
+        /// <param name="unknownPath">куда копировать файлы неизвестного типа</param>
         private void finalCopy(string fromPath, string toPath, string pechPath, string unknownPath)
         {
             DirectoryInfo fromDir = new DirectoryInfo(fromPath);
@@ -190,7 +192,7 @@ namespace NSIUnPack
                     }
 
                 }
-                //Если V2 то удаляем
+                //Если V2 то ничего не делаем
                 else if (fi1.Name == "V2.DBF")
                 {
 

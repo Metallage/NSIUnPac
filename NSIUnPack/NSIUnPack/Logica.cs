@@ -20,41 +20,56 @@ namespace NSIUnPack
         public Logica()
         {
             ParseSettings("Path.xml");
-                //Создаём временную директорию, если её нет
-                if (!Directory.Exists(tempPath))
-                {
-                    Directory.CreateDirectory(tempPath);
-                }
-                //Создаём дирректорию вывода, если её нет
-                if (!Directory.Exists(outPath))
-                {
-                    Directory.CreateDirectory(outPath);
-                }
+            //Создаём временную директорию, если её нет
+            if (!Directory.Exists(tempPath))
+            {
+                Directory.CreateDirectory(tempPath);
+            }
+            //Создаём дирректорию вывода, если её нет
+            if (!Directory.Exists(outPath))
+            {
+                Directory.CreateDirectory(outPath);
+            }
 
-            
+            //создаём директорию для PECH
+            if (!Directory.Exists(pechPath))
+            {
+                Directory.CreateDirectory(pechPath);
+            }
+
+            //Создаём директорию для неизвестных файлов
+            if (!Directory.Exists(unknownPath))
+            {
+                Directory.CreateDirectory(unknownPath);
+            }
+
         }
 
 
         public void ExtractNSI()
         {
             List<archNSI> nsiFiles = new List<archNSI>();
+            DirectoryInfo nsiDir = new DirectoryInfo(inPath);
 
-            do
+            do //Циклично проверяем директорию на наличие архивов
             {
                 nsiFiles.Clear();
-                DirectoryInfo nsiDir = new DirectoryInfo(inPath);
+
                 if (nsiDir.Exists)
                 {
+                    // Получеам список файлов
                     FileInfo[] nsiArhFiles = nsiDir.GetFiles();
 
                     foreach (FileInfo nsiFI in nsiArhFiles)
                     {
                         if ((nsiFI.Extension.ToLower() == ".lzh") | (nsiFI.Extension.ToLower() == ".zip") | (nsiFI.Extension.ToLower() == ".rar")|(nsiFI.Extension.ToLower() == ".7z"))
                         {
+                            //Добавляем файл в очередь на распаковку
                             nsiFiles.Add(new archNSI(nsiFI.FullName));
                         }
                         else if(nsiFI.Extension.ToLower() == ".(s)")
                         {
+                            // Удаляем сопроводиловки (их никто не читает)
                             File.Delete(nsiFI.FullName);
                         }
                     }
@@ -63,6 +78,7 @@ namespace NSIUnPack
                     {
                         if(regExpString != null)
                         {
+                            //Если есть отдельное регулярное выражение в xml, то используем её
                             arN.LocalRegExp = regExpString;
                         }
 
@@ -70,39 +86,14 @@ namespace NSIUnPack
                     }
 
                 }
-        }
+            }
             while (nsiFiles.Count>0);
-            
-
         }
 
 
-        //unzip test
-        //public void UnZip()
-        //{
-        //    archNSI nsi1 = new archNSI(@"c:\temp\unp\in\mdp6406.lzh");
-        //    bool isSuccess = nsi1.UnZipNSI(tempPath ,@"c:\temp\unp\out\");
-        //}
 
-        //for tests
-        public void PrintFiles()
-        {
-            if(Directory.Exists(inPath))
-            {
 
-                string[] filesFound = Directory.GetFiles(inPath);
-
-                foreach (string s in filesFound)
-                {
-                    Console.WriteLine(s);
-                }
-            }
-            else
-            {
-                Console.WriteLine("Не найдена дирректория");
-            }
-
-        }
+       
 
         /// <summary>
         /// Парсит настройки из XML
@@ -139,17 +130,6 @@ namespace NSIUnPack
                         regExpString = xmlPath.InnerText;
                         break;
                 }
-            }
-        }
-
-        private void OperateNSI()
-        {
-            DirectoryInfo sourceDir = new DirectoryInfo(inPath);
-
-            //Проверяем директорию с архивами
-            if(sourceDir.Exists)
-            {
-
             }
         }
 
