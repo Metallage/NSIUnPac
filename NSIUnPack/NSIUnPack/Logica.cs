@@ -15,7 +15,9 @@ namespace NSIUnPack
         private string unknownPath;
         private string outPath ;
         private string archiver;
+        private string valutaOut;
         private string regExpString;
+      
 
         public Logica()
         {
@@ -50,6 +52,7 @@ namespace NSIUnPack
         {
             List<archNSI> nsiFiles = new List<archNSI>();
             DirectoryInfo nsiDir = new DirectoryInfo(inPath);
+            ValutaCop(valutaOut);
 
             do //Циклично проверяем директорию на наличие архивов
             {
@@ -91,7 +94,20 @@ namespace NSIUnPack
         }
 
 
-
+        /// <summary>
+        /// Копирует валюту Надо тестить
+        /// </summary>
+        /// <param name="outputVal">Куда копируем</param>
+        private void ValutaCop(string outputVal)
+        {
+            DateTime currentDate = DateTime.Now;
+            string incomeValDir = inPath + currentDate.Day.ToString() + "_" + currentDate.Month.ToString() + @"\";
+            string valFileName = @"VAL" + currentDate.Day.ToString() + currentDate.Month.ToString() + ".txt";
+            if(File.Exists(incomeValDir+valFileName))
+            {
+                File.Copy(incomeValDir + valFileName, outputVal + currentDate.Year.ToString() + @"\" + currentDate.Month.ToString() + @"\" + valFileName, true);
+            }
+        }
 
        
 
@@ -128,6 +144,9 @@ namespace NSIUnPack
                         break;
                     case "regExp":
                         regExpString = xmlPath.InnerText;
+                        break;
+                    case "valutaOut":
+                        valutaOut = xmlPath.InnerText;
                         break;
                 }
             }
