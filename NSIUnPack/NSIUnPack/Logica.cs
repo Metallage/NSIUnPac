@@ -107,6 +107,10 @@ namespace NSIUnPack
             {
                 File.Copy(incomeValDir + valFileName, outputVal + currentDate.Year.ToString() + @"\" + currentDate.Month.ToString() + @"\" + valFileName, true);
             }
+            if(Directory.Exists(incomeValDir))
+            {
+                Directory.Delete(incomeValDir, true);
+            }
         }
 
        
