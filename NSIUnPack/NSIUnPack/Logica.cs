@@ -17,6 +17,7 @@ namespace NSIUnPack
         private string archiver;
         private string valutaOut;
         private string regExpString;
+        private string v2Out;
       
 
         public Logica()
@@ -85,7 +86,7 @@ namespace NSIUnPack
                             arN.LocalRegExp = regExpString;
                         }
 
-                        arN.UnZipNSI(tempPath, outPath, archiver, pechPath, unknownPath);
+                        arN.UnZipNSI(tempPath, outPath, archiver, pechPath, unknownPath, v2Out);
                     }
 
                 }
@@ -101,11 +102,11 @@ namespace NSIUnPack
         private void ValutaCop(string outputVal)
         {
             DateTime currentDate = DateTime.Now;
-            string incomeValDir = inPath + currentDate.Day.ToString() + "_" + currentDate.Month.ToString() + @"\";
-            string valFileName = @"VAL" + currentDate.Day.ToString() + currentDate.Month.ToString() + ".txt";
+            string incomeValDir = inPath + currentDate.Day.ToString("D2") + "_" + currentDate.Month.ToString("D2") + @"\";
+            string valFileName = @"VAL" + currentDate.Day.ToString("D2") + currentDate.Month.ToString("D2") + ".txt";
             if(File.Exists(incomeValDir+valFileName))
             {
-                File.Copy(incomeValDir + valFileName, outputVal + currentDate.Year.ToString() + @"\" + currentDate.Month.ToString() + @"\" + valFileName, true);
+                File.Copy(incomeValDir + valFileName, outputVal + currentDate.Year.ToString("D4") + @"\" + currentDate.Month.ToString("D2") + @"\" + valFileName, true);
             }
             if(Directory.Exists(incomeValDir))
             {
@@ -113,7 +114,7 @@ namespace NSIUnPack
             }
         }
 
-       
+
 
         /// <summary>
         /// Парсит настройки из XML
@@ -151,6 +152,9 @@ namespace NSIUnPack
                         break;
                     case "valutaOut":
                         valutaOut = xmlPath.InnerText;
+                        break;
+                    case "V2":
+                        v2Out = xmlPath.InnerText;
                         break;
                 }
             }

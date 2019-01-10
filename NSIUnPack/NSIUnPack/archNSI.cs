@@ -48,7 +48,7 @@ namespace NSIUnPack
         /// <param name="tempPath">Временная директория</param>
         /// <param name="outputPath">Конечная дирректория</param>
         /// <returns>Получилось ли распаковать</returns>
-        public bool UnZipNSI(string tempPath, string outputPath, string archiver, string pechPath, string unknownPath)
+        public bool UnZipNSI(string tempPath, string outputPath, string archiver, string pechPath, string unknownPath, string v2Out)
         {
             //Проверяем наличие временной директории, если нет то создаём
             if (!Directory.Exists(tempPath + this.fileName + @"\"))
@@ -61,7 +61,7 @@ namespace NSIUnPack
             //Если получилось из временной в финальную копируем
             if(isSuccess)
             {
-                finalCopy(tempPath + @"\" + this.fileName + @"\", outputPath, pechPath, unknownPath);
+                finalCopy(tempPath + @"\" + this.fileName + @"\", outputPath, pechPath, unknownPath, v2Out);
             }
 
             return isSuccess;
@@ -169,7 +169,7 @@ namespace NSIUnPack
         /// <param name="toPath">куда копировать</param>
         /// <param name="pechPath">куда копировать PECH</param>
         /// <param name="unknownPath">куда копировать файлы неизвестного типа</param>
-        private void finalCopy(string fromPath, string toPath, string pechPath, string unknownPath)
+        private void finalCopy(string fromPath, string toPath, string pechPath, string unknownPath, string v2Out)
         {
             DirectoryInfo fromDir = new DirectoryInfo(fromPath);
             FileInfo[] fromFiles = fromDir.GetFiles();
@@ -192,10 +192,10 @@ namespace NSIUnPack
                     }
 
                 }
-                //Если V2 то ничего не делаем
+                //
                 else if (fi1.Name == "V2.DBF")
                 {
-
+                    V2Copy(v2Out, fromPath);
                 }
                 else if((fi1.Extension.ToLower() == ".dbf")|(fi1.Extension.ToLower() == ".dbt") | (fi1.Extension.ToLower() == ".fpt"))
                 {
@@ -226,6 +226,20 @@ namespace NSIUnPack
 
             }
             ClearTempDir(fromPath);
+        }
+
+        private void V2Copy(string v2Out, string fromPath)
+        {
+            FileInfo v2File = new FileInfo(fromPath + "V2.DBF");
+            DateTime v2Date = v2File.LastWriteTime;
+            string outPath = v2Out + v2Date.Year.ToString("D4") + @"\" + v2Date.Month.ToString("D2") + @"\" + v2Date.Day.ToString("D2") + @"\";
+            if (!Directory.Exists(outPath))
+            {
+                Directory.CreateDirectory(outPath);
+            }
+            v2File.CopyTo(outPath + "V2.DBF", true);
+            
+
         }
 
         public string LocalRegExp

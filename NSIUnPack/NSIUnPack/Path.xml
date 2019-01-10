@@ -7,5 +7,6 @@
   <outputPath>c:\temp\unp\out\</outputPath>
   <archiver>7z\7z.exe</archiver>
   <valutaOut></valutaOut>
+  <V2></V2>
   <regExp>(?&lt;directory&gt;[a-zA-Z]:[a-zA-Z0-9\\!_]*\\)(?&lt;file&gt;[\w\.]+).(?&lt;extention&gt;zip|rar|lzh|7z)</regExp>
 </root>
