@@ -196,6 +196,7 @@ namespace NSIUnPack
                 else if (fi1.Name == "V2.DBF")
                 {
                     V2Copy(v2Out, fromPath);
+                    V2Current(v2Out,fromPath);
                 }
                 else if((fi1.Extension.ToLower() == ".dbf")|(fi1.Extension.ToLower() == ".dbt") | (fi1.Extension.ToLower() == ".fpt"))
                 {
@@ -238,9 +239,25 @@ namespace NSIUnPack
                 Directory.CreateDirectory(outPath);
             }
             v2File.CopyTo(outPath + "V2.DBF", true);
-            
 
         }
+
+        private void V2Current(string v2Out, string fromPath)
+        {
+            FileInfo v2File = new FileInfo(fromPath + "V2.DBF");
+            FileInfo v2Old = new FileInfo(v2Out + "v2current\\V2.DBF");
+
+            if (!Directory.Exists(v2Out + "v2current"))
+            {
+                Directory.CreateDirectory(v2Out + "v2current");
+            }
+
+            if(!v2Old.Exists||(v2File.LastWriteTime > v2Old.LastWriteTime))
+            {
+                v2File.CopyTo(v2Out + "v2current\\V2.DBF", true);
+            }
+        }
+
 
         public string LocalRegExp
         { get; set; }
